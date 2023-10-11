@@ -1,14 +1,20 @@
 package com.example.wechat.web;
 
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class WxController {
@@ -59,5 +65,40 @@ public class WxController {
         }
 
         return  null;
+    }
+
+    @PostMapping("/")
+    public String receiveMessage(HttpServletRequest request) throws IOException {
+        System.out.println("收到用户的消息");
+
+        ServletInputStream inputStream = request.getInputStream();
+//        byte[] b = new byte[1024];
+//        int len;
+//        while ((len = inputStream.read(b)) != -1) {
+//            System.out.println(new String(b, 0, len));
+//        }
+
+        Map<String, String> map = new HashMap<>();
+        SAXReader reader = new SAXReader();
+
+        try {
+            // 读取Request输入流，获取document对象
+            Document document = reader.read(inputStream);
+            // 获得root节点
+            Element root = document.getRootElement();
+            // 获取所有子节点
+            List<Element> elements = root.elements();
+
+            //遍历
+            for (Element element : elements) {
+                map.put(element.getName(), element.getStringValue());
+            }
+
+        } catch (DocumentException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println(map);
+        return "";
     }
 }
