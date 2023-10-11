@@ -1,5 +1,7 @@
 package com.example.wechat.web;
 
+import com.example.wechat.message.TextMessage;
+import com.thoughtworks.xstream.XStream;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import org.dom4j.Document;
@@ -101,7 +103,29 @@ public class WxController {
         System.out.println(map);
 
         // 回复消息
-        String message = "<xml><ToUserName><![CDATA[oJT3_6mjvcPe7KcV76OA0GaYjm2k]]></ToUserName><FromUserName><![CDATA[gh_b1f97d7f1e08]]></FromUserName><CreateTime>12345678</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[你好]]></Content></xml>";
+//        String message = "<xml><ToUserName><![CDATA[oJT3_6mjvcPe7KcV76OA0GaYjm2k]]></ToUserName><FromUserName><![CDATA[gh_b1f97d7f1e08]]></FromUserName><CreateTime>12345678</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[你好]]></Content></xml>";
+        String message = getReplyMessage(map);
+        System.out.println(message);
         return message;
+    }
+
+    /**
+     * 获得回复的消息内容
+     * @param map
+     * @return xml格式的字符串
+     */
+    private String getReplyMessage(Map<String, String> map) {
+        TextMessage textMessage = new TextMessage();
+        textMessage.setToUserName(map.get("FromUserName"));
+        textMessage.setFromUserName(map.get("ToUserName"));
+        textMessage.setMsgType("text");
+        textMessage.setContent("欢迎关注本公众号！");
+        textMessage.setCreateTime(System.currentTimeMillis()/1000);
+
+        // XStream将java对象转换成xml字符串
+        XStream xStream = new XStream();
+        xStream.processAnnotations(TextMessage.class);
+        String xml = xStream.toXML(textMessage);
+        return xml;
     }
 }
