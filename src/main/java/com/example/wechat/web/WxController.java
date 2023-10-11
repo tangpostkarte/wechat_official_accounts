@@ -99,6 +99,9 @@ public class WxController {
         }
 
         System.out.println(map);
-        return "";
+
+        // 回复消息
+        String message = "<xml><ToUserName><![CDATA[oJT3_6mjvcPe7KcV76OA0GaYjm2k]]></ToUserName><FromUserName><![CDATA[gh_b1f97d7f1e08]]></FromUserName><CreateTime>12345678</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[你好]]></Content></xml>";
+        return message;
     }
 }
